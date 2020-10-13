@@ -1,4 +1,4 @@
-const dbService = require('../../common/inMemoryDB');
+const dbService = require('../../common/local-db/user-db');
 
 const getAll = async () => dbService.getAllUsers();
 
@@ -8,6 +8,6 @@ const create = async user => dbService.createUser(user);
 
 const edit = async user => dbService.editUser(user);
 
-const deleteUser = async id => dbService.deleteUser(id);
+const deleteById = async id => dbService.deleteById(id);
 
-module.exports = { getAll, getById, create, edit, deleteUser };
+module.exports = { getAll, getById, create, edit, deleteById };

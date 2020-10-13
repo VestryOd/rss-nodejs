@@ -1,5 +1,3 @@
-// const User = require('../resources/users/user.model');
-
 const DB = [
   {
     id: 'aaee83f5-1ffd-4102-9ff1-23fe96180908',
@@ -65,17 +63,24 @@ const createUser = async user => {
 
 const editUser = async user => {
   const { data, index } = findUser(user.id);
-  DB[index] = {
-    ...data,
-    ...user
-  };
-  return getUserById(user.id);
+  if (data && index) {
+    DB[index] = {
+      ...data,
+      ...user
+    };
+  }
+  return !data && !index ? null : getUserById(user.id);
 };
 
-const deleteUser = async id => {
+const deleteById = async id => {
   const { data, index } = findUser(id);
-  DB.splice(index, 1);
-  return `User ${data.name} with id ${id} was deleted`;
+  let deleted = null;
+  if (data && index) {
+    deleted = DB.splice(index, 1);
+  }
+  return !deleted || !deleted.length
+    ? null
+    : `User ${data.name} with id ${id} was deleted`;
 };
 
-module.exports = { getAllUsers, getUserById, createUser, editUser, deleteUser };
+module.exports = { getAllUsers, getUserById, createUser, editUser, deleteById };
