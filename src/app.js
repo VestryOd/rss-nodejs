@@ -4,7 +4,13 @@ const path = require('path');
 const YAML = require('yamljs');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
-// const taskRouter = require('./resources/tasks/task.router');
+const {
+  eventLogger,
+  errorHadler,
+  onUncaughtException,
+  onUnhandledPromiseRejection
+} = require('./niddleware/errror-handler');
+// const { exit } = process;
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -13,16 +19,29 @@ app.use(express.json());
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
-app.use('/', (req, res, next) => {
-  if (req.originalUrl === '/') {
-    res.send('Service is running!');
-    return;
-  }
-  next();
+app
+  .use('/', (req, res, next) => {
+    if (req.originalUrl === '/') {
+      res.send('Service is running!');
+      return;
+    }
+    next();
+  })
+  .use(eventLogger)
+  .use('/users', userRouter)
+  .use('/boards', boardRouter)
+  .use(errorHadler);
+
+process.on('uncaughtException', error => {
+  onUncaughtException(error);
 });
 
-app.use('/users', userRouter);
+process.on('unhandledRejection', error => {
+  onUnhandledPromiseRejection(error);
+});
 
-app.use('/boards', boardRouter);
+// throw Error('oops');
+
+// Promise.reject(new Error('Oops!'));
 
 module.exports = app;
