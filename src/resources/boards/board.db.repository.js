@@ -23,34 +23,6 @@ const add = async (title, columnsArray) => {
 
 const update = async (boardId, title, columnsArray) => {
   const foundBoard = await getById(boardId);
-  // if (foundBoard) {
-  //   foundBoard.title = title;
-  //   const newColumns = [];
-
-  //   columnsArray.forEach(elem => {
-  //     const column = foundBoard.columns.find(el => {
-  //       return el.id === elem._id;
-  //     });
-  //     if (column) {
-  //       column.updateOne({ title: column.title, order: column.order });
-  //       newColumns.push(column);
-  //     } else {
-  //       const newColumn = new Column({ ...elem, boardId });
-  //       newColumns.push(newColumn);
-  //       newColumn.save();
-  //     }
-  //   });
-  //   const oldColumns = foundBoard.columns;
-  //   foundBoard.columns = newColumns;
-  //   await foundBoard.save();
-  //   oldColumns.forEach(x => {
-  //     const isThere = columnsArray.find(y => y.id === x.id);
-  //     if (!isThere) {
-  //       Column.deleteOne({ id: x.id });
-  //     }
-  //   });
-  //   return foundBoard;
-  // }
   if (foundBoard) {
     foundBoard.title = title;
 
