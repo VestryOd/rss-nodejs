@@ -1,6 +1,5 @@
 const router = require('express').Router({ mergeParams: true });
 const taskService = require('./task.service');
-const Task = require('./task.model');
 const { catchErrors, CustomError } = require('../../common/utills');
 
 router
@@ -17,9 +16,16 @@ router
   )
   .post(
     catchErrors(async (req, res, next) => {
-      const task = await taskService.createTask(
-        new Task({ ...req.body, boardId: req.params.boardId })
-      );
+      const { title, order, description, userId, columnId } = req.body;
+      const boardId = req.params.boardId;
+      const task = await taskService.createTask({
+        title,
+        order,
+        description,
+        userId,
+        boardId,
+        columnId
+      });
       if (task) {
         res.status(200).json(task);
       } else {
@@ -37,7 +43,8 @@ router
   .route('/:taskId')
   .get(
     catchErrors(async (req, res, next) => {
-      const task = await taskService.getById(req.params.taskId);
+      const { boardId, taskId } = req.params;
+      const task = await taskService.getById({ boardId, taskId });
       if (task && Object.entries(task).length) {
         res.status(200).json(task);
       } else {
@@ -52,11 +59,19 @@ router
   )
   .put(
     catchErrors(async (req, res, next) => {
-      const task = await taskService.editTask({
-        ...req.body,
-        boardId: req.params.boardId,
-        id: req.params.taskId
-      });
+      const { title, order, description, userId, boardId, columnId } = req.body;
+      const task = await taskService.editTask(
+        req.params.boardId,
+        req.params.taskId,
+        {
+          title,
+          order,
+          description,
+          userId,
+          boardId,
+          columnId
+        }
+      );
       if (task) {
         res.status(200).json(task);
       } else {
@@ -71,7 +86,8 @@ router
   )
   .delete(
     catchErrors(async (req, res, next) => {
-      const message = await taskService.deleteById(req.params.taskId);
+      const { boardId, taskId } = req.params;
+      const message = await taskService.deleteById({ boardId, taskId });
       if (message) {
         res.status(204).json(message);
       } else {

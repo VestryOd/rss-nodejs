@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const Board = require('./board.model');
 const boardsService = require('./board.service');
 const taskRouter = require('../tasks/task.router');
 const { catchErrors, CustomError } = require('../../common/utills');
@@ -18,7 +17,8 @@ router
   )
   .post(
     catchErrors(async (req, res, next) => {
-      const board = await boardsService.create(new Board({ ...req.body }));
+      const { title, columns } = req.body;
+      const board = await boardsService.create(title, columns);
       if (board && Object.entries(board).length) {
         res.status(200).json(board);
       } else {
@@ -33,17 +33,17 @@ router
   );
 
 router
-  .route('/:id')
+  .route('/:boardId')
   .get(
     catchErrors(async (req, res, next) => {
-      const board = await boardsService.getById(req.params.id);
+      const board = await boardsService.getById(req.params.boardId);
       if (board && Object.entries(board).length) {
         res.status(200).json(board);
       } else {
         return next(
           new CustomError({
             status: 404,
-            message: `Board with id: ${req.params.id} not found`
+            message: `Board with id: ${req.params.boardId} not found`
           })
         );
       }
@@ -51,17 +51,19 @@ router
   )
   .put(
     catchErrors(async (req, res, next) => {
-      const board = await boardsService.edit({
-        ...req.body,
-        id: req.params.id
-      });
+      const { title, columns } = req.body;
+      const board = await boardsService.edit(
+        req.params.boardId,
+        title,
+        columns
+      );
       if (board) {
         res.status(200).json(board);
       } else {
         return next(
           new CustomError({
             status: 400,
-            message: `Can't update, board with id: ${req.params.id} not found`
+            message: `Can't update, board with id: ${req.params.boardId} not found`
           })
         );
       }
@@ -69,14 +71,14 @@ router
   )
   .delete(
     catchErrors(async (req, res, next) => {
-      const message = await boardsService.deleteById(req.params.id);
+      const message = await boardsService.deleteById(req.params.boardId);
       if (message) {
         res.status(204).json(message);
       } else {
         return next(
           new CustomError({
             status: 404,
-            message: `Board with id: ${req.params.id} not found`
+            message: `Board with id: ${req.params.boardId} not found`
           })
         );
       }

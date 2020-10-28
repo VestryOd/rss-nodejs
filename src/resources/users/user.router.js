@@ -17,7 +17,8 @@ router
   )
   .post(
     catchErrors(async (req, res, next) => {
-      const user = await usersService.create(new User({ ...req.body }));
+      const { name, login, password } = req.body;
+      const user = await usersService.create(name, login, password);
       if (user && Object.entries(user).length) {
         res.status(200).json(User.toResponse(user));
       } else {
@@ -50,7 +51,13 @@ router
   )
   .put(
     catchErrors(async (req, res, next) => {
-      const user = await usersService.edit({ ...req.body, id: req.params.id });
+      const { name, login, password } = req.body;
+      const user = await usersService.edit(
+        req.params.id,
+        name,
+        login,
+        password
+      );
       if (user && Object.entries(user).length) {
         res.status(200).json(User.toResponse(user));
       } else {
