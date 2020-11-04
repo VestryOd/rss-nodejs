@@ -2,8 +2,12 @@ const express = require('express');
 const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET_KEY } = require('./common/config');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
+const authRouter = require('./resources/auth/auth.router');
+const { Unauthorized } = require('http-errors');
 const { eventLogger, errorHadler } = require('./niddleware/errror-handler');
 
 const app = express();
@@ -22,6 +26,19 @@ app
     next();
   })
   .use(eventLogger)
+  .use('/login', authRouter)
+  .use('*', (req, res, next) => {
+    if (req.headers.authorization) {
+      const authHeaderData = req.headers.authorization.split(' ');
+      if (
+        authHeaderData[0] === 'Bearer' &&
+        jwt.verify(authHeaderData[1], JWT_SECRET_KEY)
+      ) {
+        return next();
+      }
+    }
+    next(new Unauthorized());
+  })
   .use('/users', userRouter)
   .use('/boards', boardRouter)
   .use(errorHadler);
