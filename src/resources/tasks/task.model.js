@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
-const uuid = require('uuid');
 
 const taskSchema = new mongoose.Schema(
   {
-    _id: { type: String, default: uuid },
-    title: { type: String, default: 'New task' },
+    title: { type: String, default: 'New task title' },
     description: { type: String, default: 'New task description' },
     order: { type: Number, default: 0 },
     boardId: String,

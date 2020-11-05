@@ -1,15 +1,15 @@
 const router = require('express').Router();
 const { OK, BAD_REQUEST } = require('http-status-codes');
-const authService = require('./auth.service');
+const auth = require('./auth.service');
 
 router
   .route('/')
   .post(async (req, res, next) => {
     try {
       const { login, password } = req.body;
-      res.status(OK).json(await authService.authenticate(login, password));
-    } catch (err) {
-      return next(err);
+      res.status(OK).json(await auth(login, password));
+    } catch (error) {
+      return next(error);
     }
   })
   .all(async (req, res) => res.status(BAD_REQUEST).send());

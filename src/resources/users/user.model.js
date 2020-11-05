@@ -1,19 +1,10 @@
 const mongoose = require('mongoose');
-const uuid = require('uuid');
 
 const userSchema = new mongoose.Schema(
   {
     name: String,
-    login: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    password: String,
-    _id: {
-      type: String,
-      default: uuid
-    }
+    login: { type: String, required: true, unique: true },
+    password: String
   },
   { versionKey: false }
 );
@@ -25,4 +16,4 @@ userSchema.statics.toResponse = user => {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = { User, userSchema };

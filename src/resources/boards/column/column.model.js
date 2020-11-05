@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
-const uuid = require('uuid');
 
 const columnSchema = new mongoose.Schema(
   {
-    _id: { type: String, default: uuid },
-    title: { type: String, default: 'new Column' },
+    title: { type: String, default: 'Default column' },
     order: { type: Number, default: 0 },
     boardId: String
   },
