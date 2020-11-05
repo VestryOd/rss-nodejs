@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
-const uuid = require('uuid');
 
 const boardSchema = new mongoose.Schema(
   {
-    _id: { type: String, default: uuid },
     title: { type: String, default: 'Default board' },
     columns: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Column' }]
   },

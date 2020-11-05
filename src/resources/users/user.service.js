@@ -1,17 +1,41 @@
+const checkExistence = require('../../common/utils/checkExistence');
+const checkID = require('../../common/utils/checkID');
 const usersRepo = require('./user.db.repository');
 
 const getAll = async () => await usersRepo.getAll();
 
-const getById = async id => await usersRepo.getById(id);
-
-const create = async (name, login, password) => {
-  return await usersRepo.add(name, login, password);
+const addUser = async (name, login, password) => {
+  return await usersRepo.addUser(name, login, password);
 };
 
-const edit = async (id, name, login, password) => {
-  return await usersRepo.update(id, name, login, password);
+const getUserById = async userId => {
+  return await checkExistence(usersRepo.getUserById, 'USER', checkID(userId));
 };
 
-const deleteById = async id => await usersRepo.del(id);
+const updateUser = async (userId, name, login, password) => {
+  return await checkExistence(
+    usersRepo.updateUser,
+    'USER',
+    userId,
+    name,
+    login,
+    password
+  );
+};
 
-module.exports = { getAll, getById, create, edit, deleteById };
+const deleteUser = async userId => {
+  return await checkExistence(usersRepo.deleteUser, 'USER', checkID(userId));
+};
+
+const getUserByLogin = async login => {
+  return await usersRepo.getUserByLogin(login);
+};
+
+module.exports = {
+  getAll,
+  addUser,
+  getUserById,
+  updateUser,
+  deleteUser,
+  getUserByLogin
+};
